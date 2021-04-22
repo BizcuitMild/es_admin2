@@ -1,0 +1,194 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="style.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+		<style>#admin,#exist { display: none; }</style>
+
+		<script>
+			let selected = 0;
+			$(function(){
+				$(document).keyup(function(e) {
+					if(e.keyCode == 27){
+						$("#admin").css('display', 'none')
+						$.post('http://es_admin2/close', JSON.stringify({}));
+					}
+				})
+				window.addEventListener('message', function(event) {
+					if(event.data.type == "open"){
+						$('#notexist').css('display', 'block')
+						$('#exist').css('display', 'none')
+						$("#admin").css('display', "block")
+						$('input').val("")
+
+						$('#list').empty()
+						for(let i in event.data.players){
+							let player = event.data.players[i];
+							$('#list').append('<div class="player" id="player_' + player.id + '">' + player.name + '</div>')
+						}
+						$(".player").click(function(){
+							let id = $(this).attr('id').replace('player_', '')
+							selected = parseInt(id)
+
+							$('.player').removeClass('selected')
+							$(this).addClass('selected')
+
+							$('#exist').find('h1').text(selected + ", " + $(this).text())
+
+							$('#notexist').css('display', 'none')
+							$('#exist').css('display', 'block')
+						})
+					}
+				});
+
+				$("#close").click(() => {
+					$("#admin").css('display', 'none')
+					$.post('http://es_admin2/close', JSON.stringify({}));
+				})
+
+				$("#select_users").click(() => {
+					$('#server').css('display', 'none')
+					$('#users').css('display', 'block')
+					$(".tab").removeClass("selected")
+					$("#select_users").addClass("selected")
+					$("#select_users").blur()
+				})
+
+				$("#select_server").click(() => {
+					$('#users').css('display', 'none')
+					$('#server').css('display', 'block')
+					$('#private').css('display', 'none')
+					$(".tab").removeClass("selected")
+					$("#select_server").addClass("selected")
+					$("#select_server").blur()
+				})
+
+				$("#select_private").click(() => {
+					$('#users').css('display', 'none')
+					$('#server').css('display', 'none')
+					$('#private').css('display', 'none')
+					$(".tab").removeClass("selected")
+					$("#select_private").addClass("selected")
+					$("#select_private").blur()
+				})
+
+				$("#slay_all").click(function() {$.post('http://es_admin2/quick', JSON.stringify({id: selected, type: 'slay_all'})); $(this).blur()})
+				$("#bring_all").click(function() {$.post('http://es_admin2/quick', JSON.stringify({id: selected, type: 'bring_all'})); $(this).blur()})
+				$("#slap_all").click(function() {$.post('http://es_admin2/quick', JSON.stringify({id: selected, type: 'slap_all'})); $(this).blur()})
+				$("#heal_all").click(function() {$.post('http://es_admin2/quick', JSON.stringify({id: selected, type: 'heal_all'})); $(this).blur()})
+				$("#status_all").click(function() {$.post('http://es_admin2/quick', JSON.stringify({id: selected, type: 'status_all'})); $(this).blur()})
+				$("#revive_all").click(function() {$.post('http://es_admin2/quick', JSON.stringify({id: selected, type: 'revive_all'})); $(this).blur()})
+
+
+				$("#slay").click(function() {$.post('http://es_admin2/quick', JSON.stringify({id: selected, type: 'slay'})); $(this).blur()})
+				$("#kick").click(function() {$.post('http://es_admin2/quick', JSON.stringify({id: selected, type: 'kick'})); $(this).blur()})
+				$("#noclip").click(function() {$.post('http://es_admin2/quick', JSON.stringify({id: selected, type: 'noclip'})); $(this).blur()})
+				$("#freeze").click(function() {$.post('http://es_admin2/quick', JSON.stringify({id: selected, type: 'freeze'})); $(this).blur()})
+				$("#bring").click(function() {$.post('http://es_admin2/quick', JSON.stringify({id: selected, type: 'bring'})); $(this).blur()})
+				$("#goto").click(function() {$.post('http://es_admin2/quick', JSON.stringify({id: selected, type: 'goto'})); $(this).blur()})
+				$("#slap").click(function() {$.post('http://es_admin2/quick', JSON.stringify({id: selected, type: 'slap'})); $(this).blur()})
+				$("#crash").click(function() {$.post('http://es_admin2/quick', JSON.stringify({id: selected, type: 'crash'})); $(this).blur()})
+				$("#ban").click(function() {$.post('http://es_admin2/quick', JSON.stringify({id: selected, type: 'ban'})); $(this).blur()})
+				$("#revive").click(function() {$.post('http://es_admin2/quick', JSON.stringify({id: selected, type: 'revive'})); $(this).blur()})
+				$("#status").click(function() {$.post('http://es_admin2/quick', JSON.stringify({id: selected, type: 'status'})); $(this).blur()})
+				$("#heal").click(function() {$.post('http://es_admin2/quick', JSON.stringify({id: selected, type: 'heal'})); $(this).blur()})
+				$("#setgroup").click(function() {$.post('http://es_admin2/set', JSON.stringify({user: selected, type: 'group', param: $("#newgroup").val()})); $(this).blur()})
+				$("#setlevel").click(function() {$.post('http://es_admin2/set', JSON.stringify({user: selected, type: 'level', param: $("#newlevel").val()})); $(this).blur()})
+				$("#setmoney").click(function() {$.post('http://es_admin2/set', JSON.stringify({user: selected, type: 'money', param: $("#newmoney").val()})); $(this).blur()})
+				$("#setbank").click(function() {$.post('http://es_admin2/set', JSON.stringify({user: selected, type: 'bank1', param: $("#newbank1").val()})); $(this).blur()})
+				$("#givecash").click(function() {$.post('http://es_admin2/set', JSON.stringify({user: selected, type: 'cash', param: $("#newcash").val()})); $(this).blur()})
+				$("#givebank").click(function() {$.post('http://es_admin2/set', JSON.stringify({user: selected, type: 'bank2', param: $("#newbank2").val()})); $(this).blur()})
+
+				$('button').click(function() {$(this).blur()});
+			});
+		</script>
+	</head>
+	<body>
+		<div id="admin">
+			<div class="topbar">
+				<p>Admin Menu By ซามายด์.</p>
+				<div id="close">&#10060;</div>
+			</div>
+
+			<div id="tabs">
+				<button id="select_users" class="tab selected">Users</button>
+				<button id="select_server" class="tab">Server</button>
+				<button id="select_private" class="tab">Private</button>
+			</div>
+
+			<div id="main">
+				<div id="users">
+					<div id="list">
+					</div>
+					<div id="selected">
+						<div id="notexist">
+							<h1>เลือกผู้เล่น</h1>
+						</div>
+						<div id="exist">
+							<div id="quick">
+								<h3>ฟังก์ชันผู้ดูแลระบบ</h3>
+								<button class="quick" id="slay">ฆ่า</button>
+								<button class="quick" id="kick">เตะ</button>
+								<button class="quick" id="noclip">Noclip</button>
+								<button class="quick" id="freeze">แช่แข็ง</button>
+								<button class="quick" id="slap">ตบ</button>
+								<button class="quick" id="crash">แคช</button>
+								<button class="quick" id="ban">แบน</button>
+								<button class="quick" id="bring">ดึง</button>
+								<button class="quick" id="goto">ไปหา</button>
+								<button class="quick" id="heal">เพิ่มเลือด</button>
+								<button class="quick" id="status">เพิ่มน้ำ, อาหาร</button>
+								<button class="quick" id="revive">ชุบชีวิต</button>
+							</div>
+							<div id="set">
+								<h3>สิทธิ์ และ เงิน</h3>
+								<div class="group_set">
+									<label>กลุ่ม</label>
+									<input id="newgroup" type="text" placeholder=""></input>
+									<button id="setgroup">Set</button>
+								</div>
+								<div class="group_set">
+									<label>ระดับสิทธิ์ 0-200</label>
+									<input id="newlevel" type="text" placeholder="0-200"></input>
+									<button id="setlevel">Set</button>
+								</div>
+								<div class="group_set">
+									<label>Set Cash</label>
+									<input id="newmoney" type="text" placeholder="จำนวน"></input>
+									<button id="setmoney">Set</button>
+								</div>
+								<div class="group_set">
+									<label>Set Bank</label>
+									<input id="newbank1" type="text" placeholder="จำนวน"></input>
+									<button id="setbank">Set</button>
+								</div>
+								<div class="group_set">
+									<label>Give Cash</label>
+									<input id="newcash" type="text" placeholder="จำนวน"></input>
+									<button id="givecash">Give</button>
+								</div>
+								<div class="group_set">
+									<label>Give Bank</label>
+									<input id="newbank2" type="text" placeholder="จำนวน"></input>
+									<button id="givebank">Give</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="server">
+					<h3>Server All</h3>
+					<button class="quick" id="slay_all">ฆ่าทั้งเซิฟเวอร์</button>
+					<button class="quick" id="bring_all">ดึงทั้งเซิฟเวอร์</button>
+					<button class="quick" id="slap_all">ตบทั้งเซิฟเวอร์</button>
+					<button class="quick" id="heal_all">เพิ่มเลือดทั้งเซิฟเวอร์</button>
+					<button class="quick" id="status_all">เพิ่มอาหารและน้ำ</button>
+					<button class="quick" id="revive_all">ชุบทั้งเซิฟเวอร์</button>
+				</div>
+				<div id="private">
+					<h3>Private</h3>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
